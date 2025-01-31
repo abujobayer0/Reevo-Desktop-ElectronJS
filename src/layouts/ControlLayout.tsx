@@ -14,6 +14,7 @@ const ControlLayout = ({ children, className }: Props) => {
     console.log(event);
     setIsVisible(payload.state);
   });
+
   return (
     <div
       className={cn(
