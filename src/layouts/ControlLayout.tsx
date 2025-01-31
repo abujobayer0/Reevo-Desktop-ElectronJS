@@ -11,7 +11,6 @@ type Props = {
 const ControlLayout = ({ children, className }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   window.ipcRenderer.on("hide-plugin", (event, payload) => {
-    console.log(event);
     setIsVisible(payload.state);
   });
 

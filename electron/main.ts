@@ -1,4 +1,4 @@
-import { app, BrowserWindow, desktopCapturer, ipcMain } from "electron";
+import { app, BrowserWindow, desktopCapturer, ipcMain, screen } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -30,13 +30,15 @@ let floatingWebcam: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 600,
-    height: 600,
-    minHeight: 600,
+    width: 400,
+    height: 360,
+    minHeight: 360,
     minWidth: 300,
     frame: false,
     transparent: true,
     hasShadow: false,
+    x: screen.getPrimaryDisplay().workAreaSize.width - 400,
+    y: 0,
     alwaysOnTop: true,
     focusable: true,
     icon: path.join(process.env.VITE_PUBLIC, "logo.svg"),
@@ -48,12 +50,14 @@ function createWindow() {
     },
   });
   studio = new BrowserWindow({
-    width: 400,
-    height: 50,
-    minHeight: 70,
-    maxHeight: 400,
+    width: 300,
+    height: 300,
+    minHeight: 300,
+    maxHeight: 300,
     minWidth: 300,
-    maxWidth: 400,
+    maxWidth: 300,
+    x: screen.getPrimaryDisplay().workAreaSize.width,
+    y: screen.getPrimaryDisplay().workAreaSize.height,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -67,13 +71,15 @@ function createWindow() {
     },
   });
   floatingWebcam = new BrowserWindow({
-    width: 400,
+    width: 200,
     height: 200,
-    minHeight: 70,
-    maxHeight: 400,
-    minWidth: 300,
-    maxWidth: 400,
+    minHeight: 200,
+    maxHeight: 200,
+    minWidth: 200,
+    maxWidth: 200,
     frame: false,
+    x: screen.getPrimaryDisplay().workAreaSize.width - 250,
+    y: screen.getPrimaryDisplay().workAreaSize.height - 230,
     transparent: true,
     alwaysOnTop: true,
     focusable: true,
@@ -92,8 +98,8 @@ function createWindow() {
   studio.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   studio.setAlwaysOnTop(true, "screen-saver", 1);
 
-  // floatingWebcam.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  // floatingWebcam.setAlwaysOnTop(true, "screen-saver", 1);
+  floatingWebcam.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  floatingWebcam.setAlwaysOnTop(true, "screen-saver", 1);
 
   // Test active push message to Renderer-process.
   win.webContents.on("did-finish-load", () => {
@@ -145,18 +151,15 @@ ipcMain.handle("getSources", async () => {
     fetchWindowIcons: true,
     types: ["window", "screen"],
   });
-  console.log(sources);
 
   return sources;
 });
 
 ipcMain.on("media-sources", (event, payload) => {
-  console.log(event);
   studio?.webContents.send("profile-recieved", payload);
 });
 
 ipcMain.on("resize-studio", (event, payload) => {
-  console.log(event);
   if (payload.shrink) {
     studio?.setSize(400, 100);
   }
@@ -166,7 +169,6 @@ ipcMain.on("resize-studio", (event, payload) => {
 });
 
 ipcMain.on("hide-plugin", (event, payload) => {
-  console.log(event);
   win?.webContents.send("hide-plugin", payload);
 });
 

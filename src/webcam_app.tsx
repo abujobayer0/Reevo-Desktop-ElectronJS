@@ -1,5 +1,5 @@
-import React from "react";
+import WebCam from "./components/global/WebCam";
 
 export default function App() {
-  return <div>webcam_app </div>;
+  return <WebCam />;
 }

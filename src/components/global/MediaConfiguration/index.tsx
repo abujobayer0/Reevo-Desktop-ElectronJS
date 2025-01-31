@@ -2,6 +2,7 @@ import { SourceDeviceStateProps } from "@/hooks/useMediaSources";
 import { useStudioSettings } from "@/hooks/useStudioSettings";
 import { Spinner } from "../Loader";
 import { Headphones, Monitor, Settings } from "lucide-react";
+
 type Props = {
   state: SourceDeviceStateProps;
   user:
