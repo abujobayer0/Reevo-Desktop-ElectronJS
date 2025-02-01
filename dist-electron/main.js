@@ -1,149 +1,109 @@
-import { app, ipcMain, desktopCapturer, BrowserWindow, screen } from "electron";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-process.env.APP_ROOT = path.join(__dirname, "..");
-const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
-const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
-const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
-let win;
-let studio;
-let floatingWebcam;
-function createWindow() {
-  win = new BrowserWindow({
+import { app as l, ipcMain as c, screen as r, desktopCapturer as u, BrowserWindow as d } from "electron";
+import { fileURLToPath as w } from "node:url";
+import n from "node:path";
+const p = n.dirname(w(import.meta.url));
+process.env.APP_ROOT = n.join(p, "..");
+const a = process.env.VITE_DEV_SERVER_URL, b = n.join(process.env.APP_ROOT, "dist-electron"), h = n.join(process.env.APP_ROOT, "dist");
+process.env.VITE_PUBLIC = a ? n.join(process.env.APP_ROOT, "public") : h;
+let o, e, s;
+function m() {
+  o = new d({
     width: 400,
     height: 360,
     minHeight: 360,
     minWidth: 300,
-    frame: false,
-    transparent: true,
-    hasShadow: false,
-    x: screen.getPrimaryDisplay().workAreaSize.width - 400,
+    frame: !1,
+    transparent: !0,
+    hasShadow: !1,
+    x: r.getPrimaryDisplay().workAreaSize.width - 400,
     y: 0,
-    alwaysOnTop: true,
-    focusable: true,
-    icon: path.join(process.env.VITE_PUBLIC, "logo.svg"),
+    alwaysOnTop: !0,
+    focusable: !0,
+    icon: n.join(process.env.VITE_PUBLIC, "logo.svg"),
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      devTools: true,
-      preload: path.join(__dirname, "preload.mjs")
+      nodeIntegration: !1,
+      contextIsolation: !0,
+      devTools: !0,
+      preload: n.join(p, "preload.mjs")
     }
-  });
-  studio = new BrowserWindow({
+  }), e = new d({
     width: 300,
-    height: 300,
-    minHeight: 300,
-    maxHeight: 300,
+    height: 50,
+    minHeight: 50,
+    maxHeight: 50,
     minWidth: 300,
     maxWidth: 300,
-    x: screen.getPrimaryDisplay().workAreaSize.width,
-    y: screen.getPrimaryDisplay().workAreaSize.height,
-    frame: false,
-    transparent: true,
-    alwaysOnTop: true,
-    icon: path.join(process.env.VITE_PUBLIC, "logo.svg"),
-    focusable: true,
+    x: r.getPrimaryDisplay().workAreaSize.width,
+    y: r.getPrimaryDisplay().workAreaSize.height,
+    frame: !1,
+    transparent: !0,
+    alwaysOnTop: !0,
+    icon: n.join(process.env.VITE_PUBLIC, "logo.svg"),
+    focusable: !0,
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      devTools: true,
-      preload: path.join(__dirname, "preload.mjs")
+      nodeIntegration: !1,
+      contextIsolation: !0,
+      devTools: !0,
+      preload: n.join(p, "preload.mjs")
     }
-  });
-  floatingWebcam = new BrowserWindow({
+  }), s = new d({
     width: 200,
     height: 200,
     minHeight: 200,
     maxHeight: 200,
     minWidth: 200,
     maxWidth: 200,
-    frame: false,
-    x: screen.getPrimaryDisplay().workAreaSize.width - 250,
-    y: screen.getPrimaryDisplay().workAreaSize.height - 230,
-    transparent: true,
-    alwaysOnTop: true,
-    focusable: true,
-    icon: path.join(process.env.VITE_PUBLIC, "logo.svg"),
+    frame: !1,
+    x: r.getPrimaryDisplay().workAreaSize.width - 250,
+    y: r.getPrimaryDisplay().workAreaSize.height - 230,
+    transparent: !0,
+    alwaysOnTop: !0,
+    focusable: !0,
+    icon: n.join(process.env.VITE_PUBLIC, "logo.svg"),
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      devTools: true,
-      preload: path.join(__dirname, "preload.mjs")
+      nodeIntegration: !1,
+      contextIsolation: !0,
+      devTools: !0,
+      preload: n.join(p, "preload.mjs")
     }
-  });
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  win.setAlwaysOnTop(true, "screen-saver", 1);
-  studio.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  studio.setAlwaysOnTop(true, "screen-saver", 1);
-  floatingWebcam.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  floatingWebcam.setAlwaysOnTop(true, "screen-saver", 1);
-  win.webContents.on("did-finish-load", () => {
-    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  });
-  studio.webContents.on("did-finish-load", () => {
-    studio == null ? void 0 : studio.webContents.send(
+  }), e.setVisibleOnAllWorkspaces(!0, { visibleOnFullScreen: !0 }), e.setAlwaysOnTop(!0, "screen-saver", 1), s.setVisibleOnAllWorkspaces(!0, { visibleOnFullScreen: !0 }), s.setAlwaysOnTop(!0, "screen-saver", 1), o.webContents.on("did-finish-load", () => {
+    o == null || o.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
+  }), e.webContents.on("did-finish-load", () => {
+    e == null || e.webContents.send(
       "main-process-message",
       (/* @__PURE__ */ new Date()).toLocaleString()
     );
-  });
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL);
-    studio.loadURL(`${VITE_DEV_SERVER_URL}/studio.html`);
-    floatingWebcam.loadURL(`${VITE_DEV_SERVER_URL}/webcam.html`);
-  } else {
-    win.loadFile(path.join(RENDERER_DIST, "index.html"));
-    studio.loadFile(path.join(RENDERER_DIST, "studio.html"));
-    floatingWebcam.loadFile(path.join(RENDERER_DIST, "webcam.html"));
-  }
+  }), a ? (o.loadURL(a), e.loadURL(`${a}/studio.html`), s.loadURL(`${a}/webcam.html`)) : (o.loadFile(n.join(h, "index.html")), e.loadFile(n.join(h, "studio.html")), s.loadFile(n.join(h, "webcam.html")));
 }
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    win = null;
-    studio = null;
-    floatingWebcam = null;
-  }
+l.on("window-all-closed", () => {
+  process.platform !== "darwin" && (l.quit(), o = null, e = null, s = null);
 });
-ipcMain.on("closeApp", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    win = null;
-    studio = null;
-    floatingWebcam = null;
-  }
+c.on("closeApp", () => {
+  process.platform !== "darwin" && (l.quit(), o = null, e = null, s = null);
 });
-ipcMain.handle("getSources", async () => {
-  const sources = await desktopCapturer.getSources({
-    thumbnailSize: { height: 100, width: 150 },
-    fetchWindowIcons: true,
+c.handle("getSources", async () => {
+  const { width: i, height: t } = r.getPrimaryDisplay().size;
+  return await u.getSources({
+    thumbnailSize: { width: i, height: t },
+    fetchWindowIcons: !0,
     types: ["window", "screen"]
   });
-  return sources;
 });
-ipcMain.on("media-sources", (event, payload) => {
-  studio == null ? void 0 : studio.webContents.send("profile-recieved", payload);
+c.on("media-sources", (i, t) => {
+  console.log(i), e == null || e.webContents.send("profile-recieved", t);
 });
-ipcMain.on("resize-studio", (event, payload) => {
-  if (payload.shrink) {
-    studio == null ? void 0 : studio.setSize(400, 100);
-  }
-  if (!payload.shrink) {
-    studio == null ? void 0 : studio.setSize(400, 250);
-  }
+c.on("resize-studio", (i, t) => {
+  console.log(i), t.shrink && (e == null || e.setSize(400, 100)), t.shrink || e == null || e.setSize(400, 250);
 });
-ipcMain.on("hide-plugin", (event, payload) => {
-  win == null ? void 0 : win.webContents.send("hide-plugin", payload);
+c.on("hide-plugin", (i, t) => {
+  console.log(i), o == null || o.webContents.send("hide-plugin", t);
 });
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+l.on("activate", () => {
+  d.getAllWindows().length === 0 && m();
 });
-app.whenReady().then(createWindow);
+l.whenReady().then(m);
 export {
-  MAIN_DIST,
-  RENDERER_DIST,
-  VITE_DEV_SERVER_URL
+  b as MAIN_DIST,
+  h as RENDERER_DIST,
+  a as VITE_DEV_SERVER_URL
 };

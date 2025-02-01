@@ -1,5 +1,26 @@
 {
-  "name": "reevo-desktop",
+  "build": {
+    "appId": "com.plexifly.reevo",
+    "productName": "Reevo",
+    "copyright": "Copyright © 2025",
+    "directories": {
+      "output": "dist-electron-build"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "name": "reevo",
   "private": true,
   "version": "0.0.0",
   "type": "module",

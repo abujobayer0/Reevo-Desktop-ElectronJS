@@ -7,18 +7,45 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies
+node_modules/
+dist/
+dist-ssr/
+out/
+release/
+build/
+cache/
+
+# Electron Build Outputs
+dist-electron/
+dist-electron-build/
+electron-builder-cache/
+electron-builder-output/
+
+# Local Environment Files
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Compiled Files
 *.local
+*.lock
+*.tsbuildinfo
 
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# OS-specific files
+Thumbs.db
+ehthumbs.db
+Desktop.ini

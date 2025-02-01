@@ -1,5 +1,5 @@
 import { selectSources, StartRecording, StopRecording } from "@/lib/recorder";
-import { cn, resizeWindow, videoRecordingTime } from "@/lib/utils";
+import { cn, videoRecordingTime } from "@/lib/utils";
 import { Cast, Pause, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,6 +26,8 @@ const StudioTray = () => {
   };
 
   window.ipcRenderer.on("profile-recieved", (event, payload) => {
+    console.log(event);
+
     setOnSources(payload);
   });
 
@@ -69,7 +71,7 @@ const StudioTray = () => {
   return !onSources ? (
     <></>
   ) : (
-    <div className="flex flex-col justify-end gap-y-2 !h-screen">
+    <div className="flex flex-col justify-end gap-y-2 h-screen">
       {preview && (
         <video
           ref={videoElement}

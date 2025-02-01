@@ -71,10 +71,16 @@ export const selectSources = async (
       audio: onSources.audio ? { deviceId: { exact: onSources.audio } } : false,
       video: false,
     });
+
     if (videoElement && videoElement.current) {
       videoElement.current.srcObject = stream;
+      videoElement.current.width =
+        stream.getVideoTracks()[0].getSettings().width || 1280;
+      videoElement.current.height =
+        stream.getVideoTracks()[0].getSettings().height || 720;
       await videoElement.current.play();
     }
+
     const combinedStream = new MediaStream([
       ...stream.getTracks(),
       ...audioStream.getTracks(),

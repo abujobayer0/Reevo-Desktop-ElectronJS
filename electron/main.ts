@@ -51,9 +51,9 @@ function createWindow() {
   });
   studio = new BrowserWindow({
     width: 300,
-    height: 300,
-    minHeight: 300,
-    maxHeight: 300,
+    height: 50,
+    minHeight: 50,
+    maxHeight: 50,
     minWidth: 300,
     maxWidth: 300,
     x: screen.getPrimaryDisplay().workAreaSize.width,
@@ -92,8 +92,8 @@ function createWindow() {
     },
   });
 
-  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  win.setAlwaysOnTop(true, "screen-saver", 1);
+  // win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  // win.setAlwaysOnTop(true, "screen-saver", 1);
 
   studio.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   studio.setAlwaysOnTop(true, "screen-saver", 1);
@@ -145,9 +145,12 @@ ipcMain.on("closeApp", () => {
     floatingWebcam = null;
   }
 });
+
 ipcMain.handle("getSources", async () => {
+  const { width, height } = screen.getPrimaryDisplay().size;
+
   const sources = await desktopCapturer.getSources({
-    thumbnailSize: { height: 100, width: 150 },
+    thumbnailSize: { width, height },
     fetchWindowIcons: true,
     types: ["window", "screen"],
   });
@@ -156,10 +159,13 @@ ipcMain.handle("getSources", async () => {
 });
 
 ipcMain.on("media-sources", (event, payload) => {
+  console.log(event);
   studio?.webContents.send("profile-recieved", payload);
 });
 
 ipcMain.on("resize-studio", (event, payload) => {
+  console.log(event);
+
   if (payload.shrink) {
     studio?.setSize(400, 100);
   }
@@ -169,6 +175,7 @@ ipcMain.on("resize-studio", (event, payload) => {
 });
 
 ipcMain.on("hide-plugin", (event, payload) => {
+  console.log(event);
   win?.webContents.send("hide-plugin", payload);
 });
 
