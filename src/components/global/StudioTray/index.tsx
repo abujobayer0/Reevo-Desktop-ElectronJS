@@ -1,6 +1,6 @@
 import { selectSources, StartRecording, StopRecording } from "@/lib/recorder";
 import { cn, videoRecordingTime } from "@/lib/utils";
-import { Cast, Pause, Square } from "lucide-react";
+import { Camera, Pause, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const StudioTray = () => {
@@ -53,11 +53,6 @@ const StudioTray = () => {
 
     return () => clearInterval(recordTimeInterval);
   }, [recording]);
-
-  //   useEffect(() => {
-  //     resizeWindow(preview);
-  //     return () => resizeWindow(preview);
-  //   }, [preview]);
 
   useEffect(() => {
     if (onSources && onSources.screen) {
@@ -118,13 +113,12 @@ const StudioTray = () => {
             stroke="#fff"
           />
         )}
-        <Cast
+        <Camera
           onClick={() => {
             setPreview((prev) => !prev);
           }}
           className="non-draggable hover:opacity-60 cursor-pointer"
           size={20}
-          fill="#fff"
           stroke="#fff"
         />
       </div>

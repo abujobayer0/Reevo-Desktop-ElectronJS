@@ -92,8 +92,8 @@ function createWindow() {
     },
   });
 
-  // win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  // win.setAlwaysOnTop(true, "screen-saver", 1);
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  win.setAlwaysOnTop(true, "screen-saver", 1);
 
   studio.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   studio.setAlwaysOnTop(true, "screen-saver", 1);
@@ -123,6 +123,19 @@ function createWindow() {
     studio.loadFile(path.join(RENDERER_DIST, "studio.html"));
     floatingWebcam.loadFile(path.join(RENDERER_DIST, "webcam.html"));
   }
+
+  // Add window close handlers
+  win.on("closed", () => {
+    win = null;
+  });
+
+  studio.on("closed", () => {
+    studio = null;
+  });
+
+  floatingWebcam.on("closed", () => {
+    floatingWebcam = null;
+  });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -138,19 +151,20 @@ app.on("window-all-closed", () => {
 });
 
 ipcMain.on("closeApp", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-    win = null;
-    studio = null;
-    floatingWebcam = null;
-  }
+  // Close all windows
+  if (win) win.close();
+  if (studio) studio.close();
+  if (floatingWebcam) floatingWebcam.close();
+
+  // Quit the app
+  app.quit();
 });
 
 ipcMain.handle("getSources", async () => {
   const { width, height } = screen.getPrimaryDisplay().size;
 
   const sources = await desktopCapturer.getSources({
-    thumbnailSize: { width, height },
+    thumbnailSize: { width: width, height: height + 100 },
     fetchWindowIcons: true,
     types: ["window", "screen"],
   });
@@ -172,6 +186,9 @@ ipcMain.on("resize-studio", (event, payload) => {
   if (!payload.shrink) {
     studio?.setSize(400, 250);
   }
+});
+ipcMain.on("minimizeApp", () => {
+  if (win) win.minimize();
 });
 
 ipcMain.on("hide-plugin", (event, payload) => {

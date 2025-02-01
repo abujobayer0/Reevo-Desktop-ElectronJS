@@ -6,7 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const onCloseApp = () => window.ipcRenderer.send("closeApp");
-
+export const onMinimizeApp = () => {
+  window.ipcRenderer.send("minimizeApp");
+};
 const httpsClient = axios.create({
   baseURL: import.meta.env.VITE_HOST_URL,
 });
