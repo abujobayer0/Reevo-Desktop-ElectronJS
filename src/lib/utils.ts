@@ -9,6 +9,17 @@ export const onCloseApp = () => window.ipcRenderer.send("closeApp");
 export const onMinimizeApp = () => {
   window.ipcRenderer.send("minimizeApp");
 };
+
+export const onShowApp = () => {
+  window.ipcRenderer.send("restoreApp");
+};
+export const onMinimizeWebCam = () => {
+  window.ipcRenderer.send("minimizeWebCam");
+};
+export const onShowWebCam = () => {
+  window.ipcRenderer.send("restoreWebCam");
+};
+
 const httpsClient = axios.create({
   baseURL: import.meta.env.VITE_HOST_URL,
 });

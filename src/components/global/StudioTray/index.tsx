@@ -1,11 +1,18 @@
 import { selectSources, StartRecording, StopRecording } from "@/lib/recorder";
-import { cn, videoRecordingTime } from "@/lib/utils";
-import { Camera, Pause, Square } from "lucide-react";
+import {
+  cn,
+  onMinimizeApp,
+  onMinimizeWebCam,
+  onShowApp,
+  onShowWebCam,
+  videoRecordingTime,
+} from "@/lib/utils";
+import { Camera, CameraOff, Pause, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const StudioTray = () => {
   const initialTime = new Date();
-  const [preview, setPreview] = useState(false);
+  // const [preview, setPreview] = useState(false);
   const [recording, setRecording] = useState(false);
   const [onTimer, setOnTimer] = useState<string>("00:00:00");
   const [count, setCount] = useState(0);
@@ -19,6 +26,7 @@ const StudioTray = () => {
       }
     | undefined
   >(undefined);
+  const [webcamVisible, setWebcamVisible] = useState(true);
 
   const clearTime = () => {
     setOnTimer("00:00:00");
@@ -67,18 +75,19 @@ const StudioTray = () => {
     <></>
   ) : (
     <div className="flex flex-col justify-end gap-y-2 h-screen">
-      {preview && (
+      {/* {preview && (
         <video
           ref={videoElement}
           autoPlay
           className={cn("w-6/12 bg-white self-end")}
         />
-      )}
+      )} */}
       <div className="rounded-full relative overflow-hidden flex justify-around items-center h-20 w-full border-2 bg-[#171717] draggable border-white/40">
         <div
           {...(onSources && {
             onClick: () => {
               setRecording(true);
+              onMinimizeApp();
               StartRecording(onSources);
             },
           })}
@@ -105,6 +114,7 @@ const StudioTray = () => {
             className="non-draggable cursor-pointer hover:scale-110 transform transition duration-150 "
             onClick={() => {
               setRecording(false);
+              onShowApp();
               clearTime();
               StopRecording();
             }}
@@ -113,14 +123,27 @@ const StudioTray = () => {
             stroke="#fff"
           />
         )}
-        <Camera
-          onClick={() => {
-            setPreview((prev) => !prev);
-          }}
-          className="non-draggable hover:opacity-60 cursor-pointer"
-          size={20}
-          stroke="#fff"
-        />
+        {webcamVisible ? (
+          <Camera
+            className="non-draggable cursor-pointer text-gray-300 hover:text-white opacity-80 hover:opacity-100 transition"
+            size={20}
+            onClick={() => {
+              onMinimizeWebCam();
+              setWebcamVisible(false);
+            }}
+            stroke="currentColor"
+          />
+        ) : (
+          <CameraOff
+            className="non-draggable cursor-pointer text-gray-300 hover:text-white opacity-80 hover:opacity-100 transition"
+            size={20}
+            onClick={() => {
+              onShowWebCam();
+              setWebcamVisible(true);
+            }}
+            stroke="currentColor"
+          />
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 const WebCam = () => {
   const camElement = useRef<HTMLVideoElement | null>(null);
+
   const streamWebcam = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
@@ -11,6 +12,7 @@ const WebCam = () => {
       await camElement.current.play();
     }
   };
+
   useEffect(() => {
     streamWebcam();
   }, []);

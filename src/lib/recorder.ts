@@ -7,7 +7,14 @@ let videoTransferFileName: string | undefined;
 let mediaRecorder: MediaRecorder = new MediaRecorder(new MediaStream());
 let userId: string;
 
-const socket = io(import.meta.env.VITE_SOCKET_URL as string);
+const socket = io(import.meta.env.VITE_SOCKET_URL as string, {
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  timeout: 20000,
+  transports: ["websocket", "polling"],
+});
 
 export const StartRecording = (onSources: {
   screen: string;
@@ -19,7 +26,13 @@ export const StartRecording = (onSources: {
   mediaRecorder.start(1000);
 };
 
-export const StopRecording = () => mediaRecorder.stop();
+export const StopRecording = () => {
+  mediaRecorder.stop();
+  window.ipcRenderer.send(
+    "open-external-link",
+    "http://localhost:3000/dashboard"
+  );
+};
 
 export const onDataAvailable = (data: BlobEvent) => {
   socket.emit("video-chunks", {

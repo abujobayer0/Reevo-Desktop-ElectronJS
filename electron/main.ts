@@ -1,6 +1,16 @@
-import { app, BrowserWindow, desktopCapturer, ipcMain, screen } from "electron";
+import {
+  app,
+  BrowserWindow,
+  desktopCapturer,
+  ipcMain,
+  screen,
+  shell,
+} from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -27,6 +37,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 let win: BrowserWindow | null;
 let studio: BrowserWindow | null;
 let floatingWebcam: BrowserWindow | null;
+let authWindow: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
@@ -164,7 +175,7 @@ ipcMain.handle("getSources", async () => {
   const { width, height } = screen.getPrimaryDisplay().size;
 
   const sources = await desktopCapturer.getSources({
-    thumbnailSize: { width: width, height: height + 100 },
+    thumbnailSize: { width: width, height: height },
     fetchWindowIcons: true,
     types: ["window", "screen"],
   });
@@ -189,6 +200,65 @@ ipcMain.on("resize-studio", (event, payload) => {
 });
 ipcMain.on("minimizeApp", () => {
   if (win) win.minimize();
+});
+ipcMain.on("restoreApp", () => {
+  if (win) {
+    if (win.isMinimized()) {
+      win.restore(); // Restore the window if it's minimized
+    }
+    win.show(); // Make sure the window is visible
+  }
+});
+ipcMain.on("minimizeWebCam", () => {
+  if (floatingWebcam) floatingWebcam.minimize();
+});
+ipcMain.on("restoreWebCam", () => {
+  if (floatingWebcam) {
+    if (floatingWebcam.isMinimized()) {
+      floatingWebcam.restore(); // Restore the window if it's minimized
+    }
+    floatingWebcam.show(); // Make sure the window is visible
+  }
+});
+
+ipcMain.on("open-external-link", (_, url) => {
+  // Close existing auth window if it exists
+  const { width, height } = screen.getPrimaryDisplay().size;
+  if (authWindow) {
+    authWindow.close();
+  }
+
+  // Create new window sharing session with main window
+  authWindow = new BrowserWindow({
+    width,
+    height,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      // Share session with main window to maintain login state
+      session: win?.webContents.session,
+    },
+  });
+
+  authWindow.loadURL(url);
+
+  authWindow.webContents.on("will-navigate", (event, newUrl) => {
+    event.preventDefault();
+    shell.openExternal(newUrl);
+    authWindow?.close();
+  });
+
+  // Also handle redirects
+  authWindow.webContents.on("will-redirect", (event, newUrl) => {
+    event.preventDefault();
+    shell.openExternal(newUrl);
+    authWindow?.close();
+  });
+
+  // Clean up on close
+  authWindow.on("closed", () => {
+    authWindow = null;
+  });
 });
 
 ipcMain.on("hide-plugin", (event, payload) => {
